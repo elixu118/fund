@@ -11,24 +11,23 @@ matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['axes.unicode_minus'] = False
 
 
-# 基金字典   这里是我们的基金代码已经名称
+# 基金字典 代码、名称
 def my_data():
     datas = {
         '001511': '兴全新视野定开混合（001511）',
         '160119': '南方中证500ETF联接A（160119）',
-        # '460300': '华泰柏瑞沪深300ETF联接A（460300）',
-        # '110011': '易方达中小盘混合（110011）',
-        # '161005': '富国天惠成长混合AB(LOF)（161005）',
-        # '005827': '易方达蓝筹精选混合（005827）',
-        # # '010849': '易方达竞争优势企业混合C(010849)',
-        # '163406': '兴全合润混合(LOF)(163406)',
-        # '166002': '中欧新蓝筹混合A(166002)',
-        # '003095': '中欧医疗健康混合A(003095)',
-        # '001714': '工银文体产业股票A(001714)',
-        # '163402': '兴全趋势投资混合(LOF)(163402)',
+        '460300': '华泰柏瑞沪深300ETF联接A（460300）',
+        '110011': '易方达中小盘混合（110011）',
+        '161005': '富国天惠成长混合AB(LOF)（161005）',
+        '005827': '易方达蓝筹精选混合（005827）',
+        # '010849': '易方达竞争优势企业混合C(010849)',
+        '163406': '兴全合润混合(LOF)(163406)',
+        '166002': '中欧新蓝筹混合A(166002)',
+        '003095': '中欧医疗健康混合A(003095)',
+        '001714': '工银文体产业股票A(001714)',
+        '163402': '兴全趋势投资混合(LOF)(163402)',
      }
     return datas
-
 
 # 数据保存到execl
 def save_excel(file_dir, data_list, sheet_name):
@@ -76,25 +75,18 @@ def save_excel_coll(file_dir, data_list, sheet_name):
     workbook = xlsxwriter.Workbook(file_dir)
     worksheet = workbook.add_worksheet("fund")
     bold = workbook.add_format({'bold': 1})
-    # headings = ['净值日期', '单位净值', '累计净值', '日增长率', '申购状态', '赎回状态', '分红送配']
-    worksheet.write_row('A1', headings, bold)
-    worksheet.write(0, 0, '净值日期')
+    worksheet.write(0, 0, '日期')
     # 写第一列（日期）
     for h in range(len(data_list[0])):
         worksheet.write(h + 1, 0, data_list[0][h][0])
 
     for i in range(len(sheet_name)):
-        # worksheet = workbook.add_worksheet(sheet_name[i])
-        # bold = workbook.add_format({'bold': 1})
-        # headings = ['净值日期', '单位净值', '累计净值', '日增长率', '申购状态', '赎回状态', '分红送配']
-        # worksheet.write_row('A1', headings, bold)
-
+        # 标题名称
+        worksheet.write(0, i + 1, sheet_name[i])
         for h in range(len(data_list[i])):
-            # worksheet.write_row('A' + str(h + 2), data_list[i][h])
-            # print("h=%d, i=%d, value=%s" % (h, i, data_list[i][h]))
             # 净值
             worksheet.write(h + 1, i+1, data_list[i][h][1])
-            # print(data_list[i][h])
+            # print("h=%d, i=%d, value=%s" % (h, i, data_list[i][h]))
 
     workbook.close()
 
@@ -169,7 +161,5 @@ def collect(start_time, end_time):
 
 
 if __name__ == '__main__':
-    datas, names = collect('2020-10-21', '2021-04-16')  # 这里是获取基金数据的时间
-    # save_excel('20210418.xlsx', datas, names)  # 名称
-    save_excel_coll('20210418_coll.xlsx', datas, names)  # 名称
-    # save_excel('fund.xlsx', datas, names)  # 名称
+    datas, names = collect('2020-10-21', '2021-04-16')  # 获取数据的时间范围
+    save_excel_coll('fund_value.xlsx', datas, names)  # 保存Excel
