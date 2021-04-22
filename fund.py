@@ -20,13 +20,13 @@ def my_data():
         '110011': '易方达中小盘混合（110011）',
         '161005': '富国天惠成长混合AB(LOF)（161005）',
         '005827': '易方达蓝筹精选混合（005827）',
-        # '010849': '易方达竞争优势企业混合C(010849)',
         '163406': '兴全合润混合(LOF)(163406)',
         '166002': '中欧新蓝筹混合A(166002)',
         '003095': '中欧医疗健康混合A(003095)',
         '001714': '工银文体产业股票A(001714)',
         '163402': '兴全趋势投资混合(LOF)(163402)',
-     }
+        # '010849': '易方达竞争优势企业混合C(010849)',
+    }
     return datas
 
 # 数据保存到execl
@@ -65,28 +65,97 @@ def save_excel(file_dir, data_list, sheet_name):
         # 设置图表的风格
         chart_col.set_style(1)
         # 把图表插入到worksheet并设置偏移
-        worksheet.insert_chart('A2', chart_col, {'x_offset': 500, 'y_offset': 1})
+        worksheet.insert_chart('A2', chart_col, {'x_offset': 1, 'y_offset': 1000})
 
     workbook.close()
 
 
 # 数据保存到execl，集合在一个sheet
-def save_excel_coll(file_dir, data_list, sheet_name):
+def save_excel_coll(file_dir, data_list, fund_name):
+    sheetname = "fund"
     workbook = xlsxwriter.Workbook(file_dir)
-    worksheet = workbook.add_worksheet("fund")
+    worksheet = workbook.add_worksheet(sheetname)
     bold = workbook.add_format({'bold': 1})
     worksheet.write(0, 0, '日期')
     # 写第一列（日期）
     for h in range(len(data_list[0])):
         worksheet.write(h + 1, 0, data_list[0][h][0])
 
-    for i in range(len(sheet_name)):
+    chart_col = workbook.add_chart({'type': 'line'})
+
+    for i in range(len(fund_name)):
         # 标题名称
-        worksheet.write(0, i + 1, sheet_name[i])
+        worksheet.write(0, i + 1, fund_name[i])
         for h in range(len(data_list[i])):
             # 净值
             worksheet.write(h + 1, i+1, data_list[i][h][1])
             # print("h=%d, i=%d, value=%s" % (h, i, data_list[i][h]))
+
+        chart_col.add_series({
+            'name': fund_name[i],
+            'categories': ['fund', 1, 0, len(data_list[i]), 0],
+            'values': ['fund', 1, i + 1, len(data_list[i]), i + 1],
+            # 'line': {'color': 'red'},
+        })
+        # 配置第一个系列数据
+        # chart_col.add_series({
+        #     # 如果新建sheet时设置了sheet名，这里就要设置成相应的值，如果没有的话，那就是Sheet1
+        #     'name': '={}!$B$1'.format(sheetname),
+        #     'categories': '={}!$A$2:$A${}'.format(sheetname, len(data_list[i])),
+        #     'values': '={}!$B$2:$B${}'.format(sheetname, len(data_list[i])),
+        #     'line': {'color': 'blue'},
+        # })
+
+        # chart_col.add_series({
+        #     'name': '="测试"',
+        #     'categories': '=fund!$A$2:$A$123',
+        #     'values': '=fund!$C$2:$C$123',
+        #     'line': {'color': 'red'},
+        # })
+
+
+        # # 配置第二个系列数据
+        # chart_col.add_series({
+        #     'name': '={}!$C$1'.format(sheetname),
+        #     'categories': '={}!$A$2:$A${}'.format(sheetname, len(data_list[i]) + 1),  # 展示名字
+        #     'values': '={}!$C$2:$C${}'.format(sheetname, len(data_list[i]) + 1),  # 展示数据
+        #     'line': {'color': 'green'},
+        # })
+    # chart_col.add_series({
+    #     'name': '="测试2"',
+    #     'categories': '=fund!$A$2:$A$123',
+    #     'values': ['fund', 1, 1, 2, 3],
+    #     'line': {'color': 'yellow'},
+    # })
+    # print("fund_name len: %d, data_list len：%d " % (len(fund_name), len(data_list[0])))
+
+    # chart_col.add_series({
+    #     'name': '测试2',
+    #     'categories': ['fund', 0, 0, 0, len(fund_name)],
+    #     'values': ['fund', 0, 1, len(data_list[0]), len(fund_name)],
+    #     'line': {'color': 'red'},
+    # })
+
+    # chart_col.add_series({
+    #     'name': '测试1',
+    #     'categories': ['fund', 1, 0, 122, 0],
+    #     'values': ['fund', 1, 1,  122, 1],
+    #     # 'line': {'color': 'red'},
+    # })
+    # chart_col.add_series({
+    #     'name': '测试2',
+    #     'categories': ['fund', 1, 0, 122, 0],
+    #     'values': ['fund', 1, 2,  122, 2],
+    #     # 'line': {'color': 'blue'},
+    # })
+    # 设置图表的title 和 x，y轴信息
+    # chart_col.set_title({'name': '基金走势'})
+    chart_col.set_x_axis({'name': '时间'})
+    chart_col.set_y_axis({'name': '价值'})
+    # 设置图表的风格
+    chart_col.set_style(3)
+    # 把图表插入到worksheet并设置偏移
+    worksheet.insert_chart('A2', chart_col, {'x_offset': 1, 'y_offset': 2500})
 
     workbook.close()
 
@@ -161,5 +230,5 @@ def collect(start_time, end_time):
 
 
 if __name__ == '__main__':
-    datas, names = collect('2020-10-21', '2021-04-16')  # 获取数据的时间范围
+    datas, names = collect('2020-10-21', '2021-12-31')  # 获取数据的时间范围
     save_excel_coll('fund_value.xlsx', datas, names)  # 保存Excel
