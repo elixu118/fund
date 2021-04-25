@@ -29,6 +29,7 @@ def my_data():
     }
     return datas
 
+
 # 数据保存到execl
 def save_excel(file_dir, data_list, sheet_name):
     workbook = xlsxwriter.Workbook(file_dir)
@@ -88,7 +89,7 @@ def save_excel_coll(file_dir, data_list, fund_name):
         worksheet.write(0, i + 1, fund_name[i])
         for h in range(len(data_list[i])):
             # 净值
-            worksheet.write(h + 1, i+1, data_list[i][h][1])
+            worksheet.write(h + 1, i + 1, data_list[i][h][1])
             # print("h=%d, i=%d, value=%s" % (h, i, data_list[i][h]))
 
         chart_col.add_series({
@@ -112,7 +113,6 @@ def save_excel_coll(file_dir, data_list, fund_name):
         #     'values': '=fund!$C$2:$C$123',
         #     'line': {'color': 'red'},
         # })
-
 
         # # 配置第二个系列数据
         # chart_col.add_series({
@@ -158,6 +158,7 @@ def save_excel_coll(file_dir, data_list, fund_name):
     worksheet.insert_chart('A2', chart_col, {'x_offset': 1, 'y_offset': 2500})
 
     workbook.close()
+
 
 # 页面解析
 def get_html(code, start_date, end_date, page=1, per=20):
